@@ -2,12 +2,14 @@
 cfg = """
 window.MathJax = {
   tex2jax: {
-    inlineMath: [ ['~~~$=','=$~~~'] ],
+    inlineMath: [ ['~~~$+','+$~~~'] ],
     displayMath: [ ['~~~$$','$$~~~'] ],
     processEscapes: true
   },
   TeX: {
-    equationNumbers: {autoNumber: 'AMS'}
+    equationNumbers: {
+       autoNumber: 'AMS'
+    }
   }
 };
 """
@@ -34,10 +36,37 @@ install{@, options} =
    }
 
    @register-rules with {
-      "$$ \\math"{engine, {=> math}} =
-         {"~~~$$", raw % math.shed{}.raw{}, "$$~~~"}
-      "$= \\math"{engine, {=> math}} =
-         {"~~~$=", raw % math.shed{}.raw{}, "=$~~~"}
+
+      "$+ \\math"{engine, {=> math}} =
+         {"~~~$+", raw % math.shed{}.raw{}, "+$~~~"}
+
+      "\\maybe\\type $$ \\math"{engine, {=> type >> [type.raw{}.trim{} or "align"], 
+                                         => math}} =
+         parts = math.statements{} each stmt ->
+            match stmt.extract{"* \\nonum", "\\maybe\\tag # \\num", "\\other"}:
+               {=> nonum} ->
+                  '{nonum.raw{}}\\nonumber' + "\\\\"
+               {=> tag >> tag.raw{}.trim{}, => num} ->
+                  match tag:
+                     "" -> num.raw{} + "\\\\"
+                     else -> '{num.raw{}}\\label\{{tag}\}\\tag\{{tag}\}' + "\\\\"
+               {=> other} ->
+                  other.raw{}
+         contents = parts.join{"\n"}.replace{R"\\\\$", ""}
+         value =
+            if type === 'raw':
+               contents
+            else:
+               '\\begin\{{type}\}\n{contents}\n\\end\{{type}\}'
+         {"~~~$$", raw % value, "$$~~~"}
+
+      ;; "$$ \\math"{engine, {=> math}} =
+      ;;    {"~~~$$", raw % math.shed{}.raw{}, "$$~~~"}
+
+      "$@ \\ref"{engine, {=> ref}} =
+         r = '\\ref\{{ref.raw{}}\}'
+         {"~~~$+", raw % r, "+$~~~"}
+
    }
 
 main{*match} =
