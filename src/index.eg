@@ -40,8 +40,9 @@ install{@, options} =
       "$+ \\math"{engine, {=> math}} =
          {"~~~$+", raw % math.shed{}.raw{}, "+$~~~"}
 
-      "\\maybe\\type $$ \\math"{engine, {=> type >> [type.raw{}.trim{} or "align"], 
-                                         => math}} =
+      "\\maybe\\descr $$ \\math"{engine, {=> descr, => math}} =
+         {var type, *cls} = ["X" + descr.raw{}.trim{}].split{R"(?=[.#])"}
+         type = type[1..] or "align"
          parts = math.statements{} each stmt ->
             match stmt.extract{"* \\nonum", "\\maybe\\tag # \\num", "\\other"}:
                {=> nonum} ->
@@ -58,10 +59,11 @@ install{@, options} =
                contents
             else:
                '\\begin\{{type}\}\n{contents}\n\\end\{{type}\}'
-         {"~~~$$", raw % value, "$$~~~"}
-
-      ;; "$$ \\math"{engine, {=> math}} =
-      ;;    {"~~~$$", raw % math.shed{}.raw{}, "$$~~~"}
+         core = {"~~~$$", raw % value, "$$~~~"}
+         if cls.length:
+            ENode{{.div, *cls}, {=}, core}
+         else:
+            core
 
       "$@ \\ref"{engine, {=> ref}} =
          r = '\\ref\{{ref.raw{}}\}'
