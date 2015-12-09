@@ -20,22 +20,35 @@ The plugin defines three operators:
 * `$$ ...` displays one or more equations
 * `$@ref` inserts a reference to an equation
 
+For example:
+
 ```
 Inline math! $+[x_1 + x_2]
 
-Display math:
+Display math!
 
 $$ \sum_{i=1}^{1000} x_i + y_i^2 + z_i^3
+
+References!
+
+$$ emc2 # e = mc^2
+
+For more information on the meaning of life, see $@emc2.
+
 ```
 
 ### Environments and numbering
 
-The `$$` operator can take an indented body. In that body, a few
-forms are specially supported:
+The `$$` operator actually takes a second argument, which is the
+environment for the equation(s) (default is `align`). This determines
+how the body is formatted.
 
-* `* equation` will add a non-numbered equation
-* `# equation` will add a numbered equation
-* `label # equation` will label an equation
+Regardless of the environment, a list of equations can be provided in
+a body using the following syntax:
+
+* `* equation` adds a *non-numbered* equation
+* `# equation` adds a *numbered* equation
+* `label # equation` *labels* an equation
   * Labelled equations can be referred to elsewhere using `$@label`
 
 Equations prefixed with `*` or `#` will be on their own line, so there
@@ -57,13 +70,13 @@ raw $$
   \end{align}
 ```
 
-To the left of `$$` you can add any of the supported environments,
+To the left of `$$` you can add any of the environments
 [listed here](http://mathjax.readthedocs.org/en/latest/tex.html#environments),
 or `raw` which means not to insert begin/end directives at all.
 
 The default environment is `align`.
 
-NOTE: you shouldn't need the starred environments like `align*`,
+**Note:** you shouldn't need the starred environments like `align*`,
 because you can prefix each equation with `#` or `*` depending on
 whether you want it to have a number or not.
 
