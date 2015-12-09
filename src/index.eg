@@ -1,0 +1,47 @@
+
+cfg = """
+window.MathJax = {
+  tex2jax: {
+    inlineMath: [ ['~~~$=','=$~~~'] ],
+    displayMath: [ ['~~~$$','$$~~~'] ],
+    processEscapes: true
+  }
+};
+"""
+
+cdn = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+
+install{@, options} =
+
+   @register-resources with {
+      "mathjax/config.js" => {
+         contents = cfg
+         inline = true
+         path = null
+         type = .js
+         method = .head
+      }
+      cdn => {
+         path = cdn
+         path-is-url = true
+         contents = false
+         type = .js
+         method = .head
+      }
+   }
+
+   @register-rules with {
+      "$$ \\math"{engine, {=> math}} =
+         {"~~~$$", raw % math.shed{}.raw{}, "$$~~~"}
+      "$= \\math"{engine, {=> math}} =
+         {"~~~$=", raw % math.shed{}.raw{}, "=$~~~"}
+   }
+
+main{*match} =
+   {@, options = {=}} when @is-quaint-engine ->
+      install{@, options}
+   {options = {=}} ->
+      {@} -> main{@, options}
+
+provide = main
+
