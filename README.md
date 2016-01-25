@@ -4,12 +4,10 @@ quaint-mathjax
 
 Embed math in Quaint using MathJax.
 
+
 ## Install
 
-```bash
-$ npm install quaint-mathjax
-$ quaint -p mathjax file.q
-```
+    quaint --setup mathjax
 
 
 ## Usage
@@ -95,4 +93,8 @@ descriptions and an id for an equations block:
 The above will wrap the equation with `<div class="my-class" id="some-id">...</div>`,
 which means you can easily customize the display of various equations.
 
+
+## Options
+
+There are no options at the moment.
 
