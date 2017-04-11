@@ -1,7 +1,7 @@
 {
   "name": "quaint-mathjax",
   "description": "Macros to embed LaTeX math in Quaint with mathjax",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "format": "cjs",
   "repository": {
     "type": "git",
